@@ -1,4 +1,5 @@
+from gps import GPS
 
-tty = '/dev/ttyO2'
-BAUDRATE = 9600
-ipaddress = "0.0.0.0:5555"
+if __name__ == "__main__":
+    gps = GPS()
+    gps.start()
