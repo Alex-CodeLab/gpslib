@@ -42,3 +42,19 @@ def bearing(lat1, lon1, lat2, lon2):
     x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dLon)
     return math.degrees(math.atan2(y, x))
 
+
+def average_last_n(coords):
+    n = len(coords)
+    if n < 2:
+        return None, None, None
+    lat_sum = 0
+    lon_sum = 0
+    for i in range(-n, 0):
+        try:
+            lat_sum += float(coords[i][0])
+            lon_sum += float(coords[i][1])
+        except Exception:
+            return None, None, None
+    lat_avg = lat_sum / n
+    lon_avg = lon_sum / n
+    return lat_avg, lon_avg, coords[-1][2]
