@@ -1,13 +1,21 @@
 import math
+from math import radians, sin, cos, atan2, sqrt
+
+# Constants
+a = 6378137.0 # Semi-major axis of the earth (m)
+f = 1 / 298.257223563 # Flattening of the earth
+b = (1 - f) * a # Semi-minor axis of the earth (m)
+L = -0.0000115 # Difference between the prime meridian and the Greenwich Meridian (degrees)
+
 
 def distance(lat1, lon1, lat2, lon2):
     R = 6371  # radius of the Earth in kilometers
-    dLat = math.radians(lat2 - lat1)
-    dLon = math.radians(lon2 - lon1)
+    d_lat = math.radians(lat2 - lat1)
+    d_lon = math.radians(lon2 - lon1)
     lat1 = math.radians(lat1)
     lat2 = math.radians(lat2)
-    a = math.sin(dLat / 2) * math.sin(dLat / 2) + \
-        math.sin(dLon / 2) * math.sin(dLon / 2) * math.cos(lat1) * math.cos(lat2)
+    a = math.sin(d_lat / 2) * math.sin(d_lat / 2) + \
+        math.sin(d_lon / 2) * math.sin(d_lon / 2) * math.cos(lat1) * math.cos(lat2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return R * c
 
@@ -23,7 +31,7 @@ def speed(lat1, lon1, time1, lat2, lon2, time2):
     t = (time2 - time1).total_seconds() / 3600
     return d / t
 
-def speed(lat1, lon1, time1, lat2, lon2, time2):
+def speed_kn(lat1, lon1, time1, lat2, lon2, time2):
     d = distance(lat1, lon1, lat2, lon2)
     t = (time2 - time1).total_seconds()
     nautical_miles_per_second = d / t / 1852
@@ -35,11 +43,11 @@ def speed(lat1, lon1, time1, lat2, lon2, time2):
 
 # Function to calculate the bearing between two points
 def bearing(lat1, lon1, lat2, lon2):
-    dLon = math.radians(lon2 - lon1)
+    d_lon = math.radians(lon2 - lon1)
     lat1 = math.radians(lat1)
     lat2 = math.radians(lat2)
-    y = math.sin(dLon) * math.cos(lat2)
-    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dLon)
+    y = math.sin(d_lon) * math.cos(lat2)
+    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(d_lon)
     return math.degrees(math.atan2(y, x))
 
 
