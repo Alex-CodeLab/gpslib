@@ -1,8 +1,8 @@
 
+[Work In Progress]
 
 Collection of GPS/autopilot related code.
 
-[WIP]
 
 The goal of this project is to create a tillerpilot (autopilot for a 7m sailboat)
 using Beagleboard Blue, a Ublox GPS module and a DC motor.
@@ -14,5 +14,10 @@ other devices.
 
  
 
+Todo:
+
+- [ ] tests
+- [ ] CLI
+- [ ] configure magnetometer, digital compass
 
 
