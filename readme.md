@@ -17,7 +17,7 @@ other devices.
 ![](https://github.com/Alex-CodeLab/gpslib/blob/main/bbb_gps.jpg)
 
 Todo:
-- [ ] tests
+- [x] tests
 - [ ] CLI
 - [ ] configure magnetometer, digital compass
 
