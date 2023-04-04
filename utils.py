@@ -8,23 +8,32 @@ L = -0.0000115 # Difference between the prime meridian and the Greenwich Meridia
 R = 6371  # radius of the Earth in kilometers
 GRAVITY = 9.81  # m/s^2
 
-def distance(latlon1, latlon2):
-    lat1, lon1 = latlon1
-    lat2, lon2 = latlon2
-    d_lat = math.radians(lat2 - lat1)
-    d_lon = math.radians(lon2 - lon1)
-    lat1 = math.radians(lat1)
-    lat2 = math.radians(lat2)
-    a = math.sin(d_lat / 2) * math.sin(d_lat / 2) + \
-        math.sin(d_lon / 2) * math.sin(d_lon / 2) * math.cos(lat1) * math.cos(lat2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return R * c
 
-def speed_knots(latlon1, time1, latlon2, time2):
-    d = distance(latlon1, latlon2)
-    t = (time2 - time1).total_seconds()
-    nautical_miles_per_second = d / t / 1852
-    return nautical_miles_per_second * 3600  # knots
+def distance(latlongalt1, latlongalt2):
+    # orthodromic distance in km
+
+    lat1, lon1, *alt1 = latlongalt1
+    lat2, lon2, *alt2 = latlongalt2
+    alt1 = alt1[0] if alt1 else 0
+    alt2 = alt2[0] if alt2 else 0
+    # Convert latitudes and longitudes to radians
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+
+    # Calculate distance using Haversine formula
+    delta_lat = lat2_rad - lat1_rad
+    delta_lon = lon2_rad - lon1_rad
+    a = math.sin(delta_lat/2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = R * c
+
+    # Calculate altitude difference
+    delta_alt = alt2 - alt1
+
+    return math.sqrt(d**2 + delta_alt**2)
+
 
 # Function to calculate the speed between two points in kilometers per hour
 def speed(latlon1, time1, latlon2, time2):
@@ -34,12 +43,10 @@ def speed(latlon1, time1, latlon2, time2):
 
 def speed_kn(latlon1, time1, latlon2, time2):
     d = distance(latlon1, latlon2)
-    t = (time2 - time1).total_seconds()
-    nautical_miles_per_second = d / t / 1852
-    knots = nautical_miles_per_second * 3600
-    kilometers_per_hour = d / t * 3600
-    kilometers_per_hour_to_knots = kilometers_per_hour / 1.852 * 0.5399568
-    return knots, kilometers_per_hour_to_knots
+    t = (time2 - time1).total_seconds() / 3600
+    kmh = d / t
+    knots = kmh / 1.852
+    return knots, kmh
 
 
 # Function to calculate the bearing between two points
