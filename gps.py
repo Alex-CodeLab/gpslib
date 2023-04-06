@@ -10,14 +10,16 @@ import zmq
 import json
 import math
 from time import sleep
-from config import tty, BAUDRATE, ipaddress
+from config import TTY, BAUDRATE, IPADDRESS
 from utils import average_last_n
 
 logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
 
+
 def signal_handler(sig, frame):
     logging.info('-- exit --')
     sys.exit(0)
+
 
 """
 1   UTC of this position report, hh is hours, mm is minutes, ss.ss is seconds.
@@ -49,18 +51,17 @@ def signal_handler(sig, frame):
 
 """
 
-
 signal.signal(signal.SIGINT, signal_handler)
 
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
-socket.bind(f"tcp://{ipaddress}")
-stream = Serial(tty, BAUDRATE, timeout=3)
+socket.bind(f"tcp://{IPADDRESS}")
+stream = Serial(TTY, BAUDRATE, timeout=3)
 ubr = UBXReader(stream, protfilter=7)
 
 
 class GPS:
-    msgtype = ['GN',]
+    msgtype = ['GN', ]
     msg_ids = ['GLL', 'GGA', 'RMC']
 
     def __init__(self, test_data=None):
@@ -73,7 +74,7 @@ class GPS:
 
     def start(self):
         print('start sending')
-        self.coordinates, nmh, knots = [], None, None,
+        self.coordinates, nmh, knots = [], None, None
         while not self._stop:
 
             parsed_data = self.get_data()
@@ -82,7 +83,6 @@ class GPS:
                 socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
             else:
                 sleep(.1)
-
 
     def get_data(self):
 

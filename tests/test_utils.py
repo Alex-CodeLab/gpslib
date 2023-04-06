@@ -1,7 +1,7 @@
 import time
 from unittest import TestCase
 from utils import distance, speed_kn, bearing
-
+import unittest
 from datetime import datetime, timedelta
 
 class UtilsTesting(TestCase):

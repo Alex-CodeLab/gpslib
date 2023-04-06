@@ -1,6 +1,4 @@
-import rcpy
-
-import rcpy.mpu9250 as mpu9250
+from rcpy import mpu9250
 from time import sleep
 
 imu = mpu9250.IMU(enable_dmp=True,
@@ -8,9 +6,9 @@ imu = mpu9250.IMU(enable_dmp=True,
                   enable_magnetometer=True,
                   enable_fusion=True)
 
-rcpy.mpu9250.read_accel_data()
-rcpy.mpu9250.read_gyro_data()
-rcpy.mpu9250.read_mag_data()
+mpu9250.read_accel_data()
+mpu9250.read_gyro_data()
+mpu9250.read_mag_data()
 
 """
 accel: 3-axis accelerations (m/s 2)
@@ -24,7 +22,7 @@ head: heading from magnetometer (radians)
 while True:
     data = imu.read()
     sleep(0.00001)
-    data['gyro'] = rcpy.mpu9250.read_gyro_data()
-    data['accel'] = rcpy.mpu9250.read_accel_data()
-    data['mag'] = rcpy.mpu9250.read_mag_data()
+    data['gyro'] = mpu9250.read_gyro_data()
+    data['accel'] = mpu9250.read_accel_data()
+    data['mag'] = mpu9250.read_mag_data()
     print(data)
