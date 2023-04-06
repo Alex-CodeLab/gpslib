@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 # Constants
 A = 6378137.0 # Semi-major axis of the earth (m)
@@ -75,10 +76,8 @@ def average_last_n(coords):
     lon_avg = lon_sum / n
     return lat_avg, lon_avg, coords[-1][2]
 
-
 class SensorFusion:
-
-    def __init__(self, lat, lon, alt):
+    def __init__(self, lat: float, lon: float, alt: float) -> None:
         self.lat = lat
         self.lon = lon
         self.alt = alt
@@ -87,15 +86,15 @@ class SensorFusion:
         self.vel_east = 0.0
         self.vel_down = 0.0
 
-        self.prev_time = None
-        self.prev_accel_x = None
-        self.prev_accel_y = None
-        self.prev_accel_z = None
-        self.prev_gyro_x = None
-        self.prev_gyro_y = None
-        self.prev_gyro_z = None
+        self.prev_time: Optional[float] = None
+        self.prev_accel_x: Optional[float] = None
+        self.prev_accel_y: Optional[float] = None
+        self.prev_accel_z: Optional[float] = None
+        self.prev_gyro_x: Optional[float] = None
+        self.prev_gyro_y: Optional[float] = None
+        self.prev_gyro_z: Optional[float] = None
 
-    def fuse_data(self, time, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z):
+    def fuse_data(self, time: float, accel_x: float, accel_y: float, accel_z: float, gyro_x: float, gyro_y: float, gyro_z: float) -> Tuple[float, float, float, float, float, float]:
         dt = time - self.prev_time if self.prev_time is not None else 0.0
 
         # Calculate new velocity using trapezoidal integration
