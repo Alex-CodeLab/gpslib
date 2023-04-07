@@ -1,5 +1,6 @@
 import contextlib
 from datetime import datetime
+from typing import Optional, Tuple
 
 from serial import Serial
 from pyubx2 import UBXReader
@@ -8,6 +9,8 @@ import signal
 import sys
 import zmq
 import json
+import threading
+import queue
 import math
 from time import sleep
 from config import TTY, BAUDRATE, IPADDRESS
@@ -60,13 +63,14 @@ stream = Serial(TTY, BAUDRATE, timeout=3)
 ubr = UBXReader(stream, protfilter=7)
 
 
-class GPS:
+class GPSThread(threading.Thread):
     msgtype = ['GN', ]
     msg_ids = ['GLL', 'GGA', 'RMC']
 
-    def __init__(self, test_data=None):
+    def __init__(self, queue, test_data: Optional[list] = None):
+        self.queue = queue
         self.spd = None
-        self.coordinates = None
+        self.coordinates = []
         print('init ....')
 
         self._stop = False
@@ -84,7 +88,7 @@ class GPS:
             else:
                 sleep(.1)
 
-    def get_data(self):
+    def get_data(self) -> Optional[Tuple]:
 
         if self._test_data:
             # print(len(self._test_data))
@@ -96,6 +100,8 @@ class GPS:
                 if parsed_data.msgID == 'RMC':
                     self.spd = parsed_data.spd
                     # print(self.spd)
+
+                # If the parsed message is of a valid message type and message ID, and the timestamp is valid
                 if (
                         parsed_data.talker in self.msgtype
                         and parsed_data.msgID in self.msg_ids
@@ -104,8 +110,11 @@ class GPS:
                     today = datetime.now().strftime('%y-%m-%d')
                     ts = f'{str(parsed_data.time)} {today}'
                     dt = datetime.strptime(ts, '%H:%M:%S %y-%m-%d')
+
+                    # Calculate the average latitude and longitude
                     lat, lon, _ = average_last_n(self.coordinates)
 
+                    # If there are at least 4 coordinates in the list, create a GNSS object
                     if len(self.coordinates) >= 4:
 
                         with contextlib.suppress(Exception):
