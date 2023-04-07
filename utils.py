@@ -1,5 +1,5 @@
 import math
-from typing import Optional
+from typing import Optional, Tuple
 
 # Constants
 A = 6378137.0 # Semi-major axis of the earth (m)

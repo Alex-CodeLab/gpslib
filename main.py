@@ -10,7 +10,7 @@ class Program:
         self.queue = queue.Queue()
         self.gps_thread = GPSThread(self.queue)
         # self.imu_thread = IMUThread(self.queue)
-        self.input_thread.daemon = True
+        # self.input_thread.daemon = True
         # self.imu_thread.daemon = True
 
 
