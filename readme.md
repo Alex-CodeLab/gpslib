@@ -19,7 +19,7 @@ other devices.
 Todo:
 - [x] tests
 - [ ] CLI
-- [ ] configure magnetometer, digital compass
-- [ ] visuals
+- [x] configure magnetometer, digital compass - IMU
+- [ ] dashboard
 
 

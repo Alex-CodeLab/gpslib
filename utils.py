@@ -2,10 +2,10 @@ import math
 from typing import Optional, Tuple
 
 # Constants
-A = 6378137.0 # Semi-major axis of the earth (m)
-F = 1 / 298.257223563 # Flattening of the earth
-B = (1 - F) * A # Semi-minor axis of the earth (m)
-L = -0.0000115 # Difference between the prime meridian and the Greenwich Meridian (degrees)
+A = 6378137.0  # Semi-major axis of the earth (m)
+F = 1 / 298.257223563  # Flattening of the earth
+B = (1 - F) * A  # Semi-minor axis of the earth (m)
+L = -0.0000115  # Difference between the prime meridian and the Greenwich Meridian (degrees)
 R = 6371  # radius of the Earth in kilometers
 GRAVITY = 9.81  # m/s^2
 
@@ -26,14 +26,14 @@ def distance(latlongalt1, latlongalt2):
     # Calculate distance using Haversine formula
     delta_lat = lat2_rad - lat1_rad
     delta_lon = lon2_rad - lon1_rad
-    a = math.sin(delta_lat/2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon/2)**2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    a = math.sin(delta_lat / 2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     d = R * c
 
     # Calculate altitude difference
     delta_alt = alt2 - alt1
 
-    return math.sqrt(d**2 + delta_alt**2)
+    return math.sqrt(d ** 2 + delta_alt ** 2)
 
 
 # Function to calculate the speed between two points in kilometers per hour
@@ -41,6 +41,7 @@ def speed(latlon1, time1, latlon2, time2):
     d = distance(latlon1, latlon2)
     t = (time2 - time1).total_seconds() / 3600
     return d / t
+
 
 def speed_kn(latlon1, time1, latlon2, time2):
     d = distance(latlon1, latlon2)
@@ -76,6 +77,7 @@ def average_last_n(coords):
     lon_avg = lon_sum / n
     return lat_avg, lon_avg, coords[-1][2]
 
+
 class SensorFusion:
     def __init__(self, lat: float, lon: float, alt: float) -> None:
         self.lat = lat
@@ -94,7 +96,8 @@ class SensorFusion:
         self.prev_gyro_y: Optional[float] = None
         self.prev_gyro_z: Optional[float] = None
 
-    def fuse_data(self, time: float, accel_x: float, accel_y: float, accel_z: float, gyro_x: float, gyro_y: float, gyro_z: float) -> Tuple[float, float, float, float, float, float]:
+    def fuse_data(self, time: float, accel_x: float, accel_y: float, accel_z: float, gyro_x: float, gyro_y: float,
+                  gyro_z: float) -> Tuple[float, float, float, float, float, float]:
         dt = time - self.prev_time if self.prev_time is not None else 0.0
 
         # Calculate new velocity using trapezoidal integration
@@ -104,7 +107,7 @@ class SensorFusion:
 
         # Calculate new position using trapezoidal integration
         lat_new = self.lat + (
-                    self.vel_north + vel_north_new) / 2.0 * dt / 111319.9  # 1 degree of latitude is approximately 111319.9 meters
+                self.vel_north + vel_north_new) / 2.0 * dt / 111319.9  # 1 degree of latitude is approximately 111319.9 meters
         lon_new = self.lon + (self.vel_east + vel_east_new) / 2.0 * dt / (111319.9 * math.cos(self.lat))
         alt_new = self.alt - (self.vel_down + vel_down_new) / 2.0 * dt
 

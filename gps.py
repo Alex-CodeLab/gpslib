@@ -5,24 +5,14 @@ from typing import Optional, Tuple
 from serial import Serial
 from pyubx2 import UBXReader
 import logging
-import signal
-import sys
 import zmq
 import json
-import threading
-import queue
-import math
+from threads import Threads
 from time import sleep
 from config import TTY, BAUDRATE, IPADDRESS
 from utils import average_last_n
 
 logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
-
-
-def signal_handler(sig, frame):
-    logging.info('-- exit --')
-    sys.exit(0)
-
 
 """
 1   UTC of this position report, hh is hours, mm is minutes, ss.ss is seconds.
@@ -54,8 +44,6 @@ def signal_handler(sig, frame):
 
 """
 
-signal.signal(signal.SIGINT, signal_handler)
-
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind(f"tcp://{IPADDRESS}")
@@ -63,23 +51,22 @@ stream = Serial(TTY, BAUDRATE, timeout=3)
 ubr = UBXReader(stream, protfilter=7)
 
 
-class GPSThread(threading.Thread):
+class GPSThread(Threads):
     msgtype = ['GN', ]
     msg_ids = ['GLL', 'GGA', 'RMC']
 
-    def __init__(self, queue, test_data: Optional[list] = None):
+    def __init__(self, queue, stop_flag, test_data: Optional[list] = None):
+        super().__init__(stop_flag)
+        print('init ....')
         self.queue = queue
         self.spd = None
         self.coordinates = []
-        print('init ....')
-
-        self._stop = False
         self._test_data = test_data
 
-    def start(self):
+    def run(self):
         print('start sending')
         self.coordinates, nmh, knots = [], None, None
-        while not self._stop:
+        while not self.stop_flag.is_set() and not self.stop_flag.handler.flag:
 
             parsed_data = self.get_data()
             # print(parsed_data)
@@ -91,7 +78,6 @@ class GPSThread(threading.Thread):
     def get_data(self) -> Optional[Tuple]:
 
         if self._test_data:
-            # print(len(self._test_data))
             return self._test_data.pop(0)
         if stream.in_waiting:
 
