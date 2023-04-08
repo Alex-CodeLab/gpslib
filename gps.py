@@ -5,11 +5,10 @@ from typing import Optional, Tuple
 from serial import Serial
 from pyubx2 import UBXReader
 import logging
-import zmq
 import json
 from threads import Threads
 from time import sleep
-from config import TTY, BAUDRATE, IPADDRESS
+from config import TTY, BAUDRATE
 from utils import average_last_n
 
 logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
@@ -44,9 +43,6 @@ logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
 
 """
 
-context = zmq.Context()
-socket = context.socket(zmq.PUB)
-socket.bind(f"tcp://{IPADDRESS}")
 stream = Serial(TTY, BAUDRATE, timeout=3)
 ubr = UBXReader(stream, protfilter=7)
 
@@ -63,6 +59,7 @@ class GPSThread(Threads):
         self.coordinates = []
         self._test_data = test_data
 
+
     def run(self):
         print('start sending')
         self.coordinates, nmh, knots = [], None, None
@@ -71,7 +68,8 @@ class GPSThread(Threads):
             parsed_data = self.get_data()
             # print(parsed_data)
             if parsed_data and not self._test_data:
-                socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
+                self.socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
+                self.queue.put(json.dumps(parsed_data).encode('utf-8'))
             else:
                 sleep(.1)
 
