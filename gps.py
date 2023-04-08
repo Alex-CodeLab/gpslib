@@ -68,7 +68,7 @@ class GPSThread(Threads):
             parsed_data = self.get_data()
             # print(parsed_data)
             if parsed_data and not self._test_data:
-                self.socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
+                # self.socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
                 self.queue.put(json.dumps(parsed_data).encode('utf-8'))
             else:
                 sleep(.1)

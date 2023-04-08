@@ -26,7 +26,7 @@ class IMUThread(Threads):
     def run(self):
         while not self.stop_flag.is_set() and not self.stop_flag.handler.flag:
             data = self.imu.read()
-            sleep(0.00001)
+            sleep(0.0001)
             data['gyro'] = mpu9250.read_gyro_data()
             data['accel'] = mpu9250.read_accel_data()
             data['mag'] = mpu9250.read_mag_data()
