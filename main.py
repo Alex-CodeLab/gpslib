@@ -23,10 +23,12 @@ def main():
     signal.signal(signal.SIGINT, handler)
     stop_flag.handler = handler
 
+
     # initialize threads
-    gps_thread = GPSThread(queue=queue.Queue(), stop_flag=stop_flag)
+    queue_ = queue.Queue()
+    gps_thread = GPSThread(queue=queue_, stop_flag=stop_flag)
     imu_thread = IMUThread(stop_flag)
-    zmq_thread = ZMQThread(stop_flag)
+    zmq_thread = ZMQThread(queue=queue_, stop_flag=stop_flag)
 
     gps_thread.start()
     imu_thread.start()
