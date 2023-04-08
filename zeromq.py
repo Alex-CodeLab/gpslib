@@ -16,7 +16,7 @@ class ZMQThread(Threads):
 
 
     def start(self):
-        while True:
+        while not self.stop_flag.is_set() and not self.stop_flag.handler.flag:
             try:
                 item = self.q.get(block=False)
                 print(f"Got item: {item}")
