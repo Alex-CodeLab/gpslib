@@ -1,8 +1,19 @@
-import signal
+""" Control
 
-def main():
-    ''''''
-    # todo: cli, start/stop gps, imu, zmq
+Usage:
+  main.py start [gps|imu|zmq]
+  main.py stop [gps|imu|zmq]
 
-if __name__ == "__main__":
-    main()
+  main.py (-h | --help)
+  main.py --version
+
+Options:
+  -h --help     Show this screen.
+
+"""
+from docopt import docopt
+
+
+if __name__ == '__main__':
+    arguments = docopt(__doc__, version='AP Control')
+    print(arguments)

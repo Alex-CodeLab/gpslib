@@ -3,3 +3,4 @@ pyzmq
 zmq
 rcpy
 pyubx2
+docopt
