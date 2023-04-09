@@ -6,7 +6,6 @@ from serial import Serial
 from pyubx2 import UBXReader
 import logging
 import json
-from threads import Threads
 from time import sleep
 from config import TTY, BAUDRATE
 from utils import average_last_n
@@ -47,14 +46,12 @@ stream = Serial(TTY, BAUDRATE, timeout=3)
 ubr = UBXReader(stream, protfilter=7)
 
 
-class GPSThread(Threads):
+class GPS:
     msgtype = ['GN', ]
     msg_ids = ['GLL', 'GGA', 'RMC']
 
-    def __init__(self, queue, stop_flag, test_data: Optional[list] = None):
-        super().__init__(stop_flag)
+    def __init__(self, test_data: Optional[list] = None):
         print('init ....')
-        self.queue = queue
         self.spd = None
         self.coordinates = []
         self._test_data = test_data
@@ -63,13 +60,12 @@ class GPSThread(Threads):
     def run(self):
         print('start sending')
         self.coordinates, nmh, knots = [], None, None
-        while not self.stop_flag.is_set() and not self.stop_flag.handler.flag:
+        while True:
 
             parsed_data = self.get_data()
             # print(parsed_data)
             if parsed_data and not self._test_data:
-                # self.socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
-                self.queue.put(json.dumps(parsed_data).encode('utf-8'))
+                self.socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
             else:
                 sleep(.1)
 
@@ -131,3 +127,12 @@ class GPSThread(Threads):
             'nmh': nmh or None,
             'spd': self.spd or None
         }
+
+
+def main():
+    gps= GPS()
+    gps.run()
+
+
+if __name__ == "__main__":
+    main()

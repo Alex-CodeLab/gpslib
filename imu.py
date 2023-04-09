@@ -1,6 +1,5 @@
 from rcpy import mpu9250
 from time import sleep
-from threads import Threads
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -15,7 +14,7 @@ head: heading from magnetometer (radians)
 """
 
 
-class IMUThread(Threads):
+class IMUT:
     def __init__(self, stop_flag):
         super().__init__(stop_flag)
         self.imu = mpu9250.IMU(enable_dmp=True,
@@ -24,10 +23,19 @@ class IMUThread(Threads):
                                enable_fusion=True)
 
     def run(self):
-        while not self.stop_flag.is_set() and not self.stop_flag.handler.flag:
+        while True:
             data = self.imu.read()
             sleep(0.0001)
             data['gyro'] = mpu9250.read_gyro_data()
             data['accel'] = mpu9250.read_accel_data()
             data['mag'] = mpu9250.read_mag_data()
             #print(data)
+
+
+def main():
+    imu= IMU()
+    imu.run()
+
+
+if __name__ == "__main__":
+    main()

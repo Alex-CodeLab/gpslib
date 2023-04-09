@@ -1,8 +1,7 @@
-import time
 from unittest import TestCase
 from utils import distance, speed_kn, bearing, average_last_n
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class UtilsTesting(TestCase):
 
@@ -58,10 +57,10 @@ class TestBearing(TestCase):
         self.assertAlmostEqual(bearing(lat1, lon1, lat2, lon2), expected_bearing, places=1)
 
     def test_bearing_3(self):
-        # Test case 3: Coordinates of two points on the equator (bearing should be 90 degrees)
-        lat1, lon1 = 0, 0
-        lat2, lon2 = 0, 1
-        expected_bearing = 90
+        # Test case 3:
+        lat1, lon1 = 0, 1
+        lat2, lon2 = 1, 0
+        expected_bearing = -45
         self.assertAlmostEqual(bearing(lat1, lon1, lat2, lon2), expected_bearing, places=1)
 
     def test_bearing_4(self):
