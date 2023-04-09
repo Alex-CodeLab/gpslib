@@ -1,6 +1,9 @@
 from rcpy import mpu9250
 from time import sleep
+from config import TTY, BAUDRATE, IPADDRESS
+import json
 import warnings
+import zmq
 
 warnings.filterwarnings('ignore')
 
@@ -16,6 +19,9 @@ head: heading from magnetometer (radians)
 
 class IMU:
     def __init__(self):
+        context = zmq.Context()
+        self.socket = context.socket(zmq.PUB)
+        self.socket.connect(f"tcp://{IPADDRESS}")
         self._imu = mpu9250.IMU(enable_dmp=True,
                                dmp_sample_rate=4,
                                enable_magnetometer=True,
@@ -29,6 +35,7 @@ class IMU:
             data['accel'] = mpu9250.read_accel_data()
             data['mag'] = mpu9250.read_mag_data()
             #print(data)
+            self.socket.send_multipart([b'', json.dumps(data).encode('utf-8')])
 
 
 def main():

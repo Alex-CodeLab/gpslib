@@ -7,8 +7,9 @@ from pyubx2 import UBXReader
 import logging
 import json
 from time import sleep
-from config import TTY, BAUDRATE
+from config import TTY, BAUDRATE, IPADDRESS
 from utils import average_last_n
+import zmq
 
 logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
 
@@ -54,8 +55,10 @@ class GPS:
         print('init ....')
         self.spd = None
         self.coordinates = []
+        context = zmq.Context()
+        self.socket = context.socket(zmq.PUB)
+        self.socket.connect(f"tcp://{IPADDRESS}")
         self._test_data = test_data
-
 
     def run(self):
         print('start sending')
@@ -130,7 +133,7 @@ class GPS:
 
 
 def main():
-    gps= GPS()
+    gps = GPS()
     gps.run()
 
 

@@ -7,7 +7,7 @@ class ZeroPubSub:
 
     def __init__(self, publish_address, subscribe_address):
         self.context = zmq.Context()
-        self.publish_socket = self.context.socket(zmq.PUB)
+        self.publish_socket = self.context.socket(zmq.XPUB)
         self.publish_socket.bind(publish_address)
         self.subscribe_socket = self.context.socket(zmq.SUB)
         self.subscribe_socket.bind(subscribe_address)
