@@ -1,27 +1,25 @@
 import zmq
 from config import IPADDRESS
-import queue as queue_
-import time
-
-from threads import Threads
+import asyncio
 
 
-class ZMQThread(Threads):
+class ZeroPubSub:
 
-    def __init__(self, queue, stop_flag):
-        super().__init__(stop_flag)
-        context = zmq.Context()
-        socket = context.socket(zmq.PUB)
-        socket.bind(f"tcp://{IPADDRESS}")
-        self.q = queue
+    def __init__(self, publish_address, subscribe_address):
+        self.context = zmq.Context()
+        self.publish_socket = self.context.socket(zmq.PUB)
+        self.publish_socket.bind(publish_address)
+        self.subscribe_socket = self.context.socket(zmq.SUB)
+        self.subscribe_socket.bind(subscribe_address)
+        self.subscribe_socket.setsockopt(zmq.SUBSCRIBE, b"")
 
 
-    def run(self):
-        while not self.stop_flag.is_set() and not self.stop_flag.handler.flag:
-            # try:
-                item = self.q.get(block=False)
-                print(f"Got item: {item}")
-                self.q.task_done()
-            # except queue_.Empty:
-            #     print("Queue is empty")
-            #     time.sleep(1)
+    async def start(self):
+        while True:
+            message = await self.subscribe_socket.recv()
+            await self.publish_socket.send(message)
+
+
+if __name__ == "__main__":
+    pubsub = ZeroPubSub("tcp://*:5555", "inproc://messages")
+    asyncio.run(pubsub.start())

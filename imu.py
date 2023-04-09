@@ -14,18 +14,17 @@ head: heading from magnetometer (radians)
 """
 
 
-class IMUT:
-    def __init__(self, stop_flag):
-        super().__init__(stop_flag)
-        self.imu = mpu9250.IMU(enable_dmp=True,
+class IMU:
+    def __init__(self):
+        self._imu = mpu9250.IMU(enable_dmp=True,
                                dmp_sample_rate=4,
                                enable_magnetometer=True,
                                enable_fusion=True)
 
     def run(self):
         while True:
-            data = self.imu.read()
-            sleep(0.0001)
+            data = self._imu.read()
+            sleep(0.001)
             data['gyro'] = mpu9250.read_gyro_data()
             data['accel'] = mpu9250.read_accel_data()
             data['mag'] = mpu9250.read_mag_data()
