@@ -1,8 +1,9 @@
 import threading
 import signal
+import multiprocessing
 
 
-class Threads(threading.Thread):
+class Threads(multiprocessing.Process):
 
     def __init__(self, stop_flag):
         super().__init__()

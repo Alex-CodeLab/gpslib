@@ -16,12 +16,12 @@ class ZMQThread(Threads):
         self.q = queue
 
 
-    def start(self):
+    def run(self):
         while not self.stop_flag.is_set() and not self.stop_flag.handler.flag:
-            try:
+            # try:
                 item = self.q.get(block=False)
                 print(f"Got item: {item}")
                 self.q.task_done()
-            except queue_.Empty:
-                print("Queue is empty")
-                time.sleep(1)
+            # except queue_.Empty:
+            #     print("Queue is empty")
+            #     time.sleep(1)

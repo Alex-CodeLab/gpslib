@@ -1,6 +1,6 @@
 import time
 from unittest import TestCase
-from utils import distance, speed_kn, bearing
+from utils import distance, speed_kn, bearing, average_last_n
 import unittest
 from datetime import datetime, timedelta
 
@@ -87,3 +87,45 @@ class TestBearing(TestCase):
         lat2, lon2 = 37.3352, -121.8813 # sanjose
         expected_bearing = 135.7
         self.assertAlmostEqual(bearing(lat1, lon1, lat2, lon2), expected_bearing, places=1)
+
+
+class TestAverageLastN(unittest.TestCase):
+    def test_empty_coords(self):
+        coords = []
+        lat, lon, dt = average_last_n(coords)
+        self.assertIsNone(lat)
+        self.assertIsNone(lon)
+        self.assertIsNone(dt)
+
+    def test_single_coord(self):
+        coords = [(1.0, 2.0, '2022-04-07 12:00:00')]
+        lat, lon, dt = average_last_n(coords)
+        self.assertIsNone(lat)
+        self.assertIsNone(lon)
+        self.assertIsNone(dt)
+
+    def test_two_coords(self):
+        coords = [(1.0, 2.0, '2022-04-07 12:00:00'), (2.0, 4.0, '2022-04-07 13:00:00')]
+        lat, lon, dt = average_last_n(coords)
+        self.assertAlmostEqual(lat, 1.5)
+        self.assertAlmostEqual(lon, 3.0)
+        self.assertEqual(dt, '2022-04-07 13:00:00')
+
+    def test_four_coords(self):
+        coords = [
+            (1.0, 2.0, '2022-04-07 12:00:00'),
+            (2.0, 4.0, '2022-04-07 13:00:00'),
+            (3.0, 6.0, '2022-04-07 14:00:00'),
+            (4.0, 8.0, '2022-04-07 15:00:00')
+        ]
+        lat, lon, dt = average_last_n(coords)
+        self.assertAlmostEqual(lat, 2.5)
+        self.assertAlmostEqual(lon, 5.0)
+        self.assertEqual(dt, '2022-04-07 15:00:00')
+
+    def test_malformed_coords(self):
+        coords = [(1.0, 2.0, '2022-04-07 12:00:00'), (2.0, 'foo', '2022-04-07 13:00:00')]
+        lat, lon, dt = average_last_n(coords)
+        self.assertIsNone(lat)
+        self.assertIsNone(lon)
+        self.assertIsNone(dt)
