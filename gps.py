@@ -1,7 +1,7 @@
 import contextlib
 from datetime import datetime
 from typing import Optional, Tuple
-
+from haversine import haversine, Unit
 from serial import Serial
 from pyubx2 import UBXReader
 import logging
