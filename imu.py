@@ -34,7 +34,6 @@ class IMU:
             data['gyro'] = mpu9250.read_gyro_data()
             data['accel'] = mpu9250.read_accel_data()
             data['mag'] = mpu9250.read_mag_data()
-            #print(data)
             self.socket.send_multipart([b'', json.dumps(data).encode('utf-8')])
 
 
