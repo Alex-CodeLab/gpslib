@@ -1,7 +1,7 @@
 import zmq
 from config import IPADDRESS
 import asyncio
-
+from config import TTY, BAUDRATE, IPADDRESS
 
 class ZeroPubSub:
 
@@ -21,5 +21,5 @@ class ZeroPubSub:
 
 
 if __name__ == "__main__":
-    pubsub = ZeroPubSub("tcp://*:5555", "inproc://messages")
+    pubsub = ZeroPubSub("tcp://{IPADDRESS}", "inproc://messages")
     asyncio.run(pubsub.start())

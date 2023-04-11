@@ -1,6 +1,6 @@
 from rcpy import mpu9250
 from time import sleep
-from config import TTY, BAUDRATE, IPADDRESS
+from config import IPADDRESS
 import json
 import warnings
 import zmq

@@ -13,15 +13,15 @@ Options:
 """
 from docopt import docopt
 import os
-import sys
 import signal
 import subprocess
+from config import VENV
 
 
 def start_program(program_file):
     try:
         # Start the program as a subprocess
-        proc = subprocess.Popen(["python", program_file])
+        proc = subprocess.Popen(["python", f"{VENV}/{program_file}"])
         print(f"Started {program_file} with PID {proc.pid}")
     except Exception as e:
         print(f"Failed to start {program_file}: {e}")
