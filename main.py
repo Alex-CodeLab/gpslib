@@ -1,6 +1,7 @@
 """ Control
 
 Usage:
+  main.py list
   main.py start [gps|imu|zmq]
   main.py stop [gps|imu|zmq]
 
@@ -38,6 +39,14 @@ def stop_program(pid):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='AP Control')
+    if arguments['list']:
+        pids = [pid for pid in os.listdir('/proc') if pid.isdigit()]
+        for pid in pids:
+            cmd = open(os.path.join('/proc', pid, 'cmdline'), 'rb').read().decode('utf-8')
+            for cm in cmd:
+                if cm in ['gps.py', 'imu.py', 'zmq.py']:
+                    print(pid, cm)
+
     if arguments['gps']:
         program_file = 'gps.py'
     if arguments['imu']:
@@ -53,7 +62,10 @@ if __name__ == '__main__':
         for pid in pids:
             try:
                 cmd = open(os.path.join('/proc', pid, 'cmdline'), 'rb').read().decode('utf-8')
+
                 if program_file in cmd:
                     stop_program(int(pid))
             except IOError:  # proc has already terminated
                 continue
+
+

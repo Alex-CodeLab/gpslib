@@ -22,10 +22,14 @@ class IMU:
         context = zmq.Context()
         self.socket = context.socket(zmq.PUB)
         self.socket.connect(f"tcp://{IPADDRESS}")
-        self._imu = mpu9250.IMU(enable_dmp=True,
-                               dmp_sample_rate=4,
-                               enable_magnetometer=True,
-                               enable_fusion=True)
+        try:
+            self._imu = mpu9250.IMU(enable_dmp=True,
+                                    dmp_sample_rate=4,
+                                    enable_magnetometer=True,
+                                    enable_fusion=True)
+        except Exception as e:
+            print('check calibration', e)
+            exit()
 
     def run(self):
         while True:
@@ -38,7 +42,7 @@ class IMU:
 
 
 def main():
-    imu= IMU()
+    imu = IMU()
     imu.run()
 
 
