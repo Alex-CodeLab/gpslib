@@ -15,6 +15,7 @@ other devices.
  
 
 ![](https://github.com/Alex-CodeLab/gpslib/blob/main/bbb_gps.jpg)
+![](https://github.com/Alex-CodeLab/gpslib/blob/main/dashboard.jpg)
 
 Todo:
 - [x] tests
