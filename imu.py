@@ -34,7 +34,7 @@ class IMU:
     def run(self):
         while True:
             data = self._imu.read()
-            sleep(0.001)
+            sleep(0.01)
             data['gyro'] = mpu9250.read_gyro_data()
             data['accel'] = mpu9250.read_accel_data()
             data['mag'] = mpu9250.read_mag_data()

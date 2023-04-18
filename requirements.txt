@@ -4,3 +4,5 @@ zmq
 rcpy
 pyubx2
 docopt
+fastapi
+websockets
