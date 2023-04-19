@@ -22,7 +22,7 @@ from config import VENV
 def start_program(program_file):
     try:
         # Start the program as a subprocess
-        proc = subprocess.Popen(["python", f"{VENV}/{program_file}"])
+        proc = subprocess.Popen([f"{VENV}/python3", program_file])
         print(f"Started {program_file} with PID {proc.pid}")
     except Exception as e:
         print(f"Failed to start {program_file}: {e}")
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     if arguments['imu']:
         program_file = 'imu.py'
     if arguments['zmq']:
-        program_file = 'zmq.py'
+        program_file = 'zeromq.py'
 
     if arguments['start']:
         start_program(program_file)

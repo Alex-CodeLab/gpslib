@@ -1,7 +1,8 @@
 import zmq
 from config import IPADDRESS
 import asyncio
-from config import TTY, BAUDRATE, IPADDRESS
+from config import TTY, BAUDRATE, IPADDRESS, PORT
+
 
 class ZeroPubSub:
 
@@ -13,7 +14,6 @@ class ZeroPubSub:
         self.subscribe_socket.bind(subscribe_address)
         self.subscribe_socket.setsockopt(zmq.SUBSCRIBE, b"")
 
-
     async def start(self):
         while True:
             message = await self.subscribe_socket.recv()
@@ -21,5 +21,5 @@ class ZeroPubSub:
 
 
 if __name__ == "__main__":
-    pubsub = ZeroPubSub("tcp://{IPADDRESS}", "inproc://messages")
+    pubsub = ZeroPubSub(f"tcp://{IPADDRESS}:{PORT}", "inproc://messages")
     asyncio.run(pubsub.start())
