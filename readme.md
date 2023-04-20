@@ -1,5 +1,5 @@
 
-[Work In Progress]
+[Work In Progress - Don't use.]
 
 Collection of GPS/autopilot related code.
 
@@ -12,15 +12,14 @@ to use the data. Also, it allows the sensors or gps to be easily replaced with a
 other devices.
 
 
- 
 
 ![](https://github.com/Alex-CodeLab/gpslib/blob/main/bbb_gps.jpg)
 ![](https://github.com/Alex-CodeLab/gpslib/blob/main/dashboard.png)
 
 Todo:
 - [x] tests
-- [ ] CLI
+- [x] CLI
 - [x] configure magnetometer, digital compass - IMU
-- [ ] dashboard
-
+- [x] dashboard
+- [ ] 
 
