@@ -1,3 +1,4 @@
+#!/home/debain/gpslib/env/bin/python
 import contextlib
 from datetime import datetime
 from typing import Optional, Tuple
@@ -7,7 +8,7 @@ from pyubx2 import UBXReader
 import logging
 import json
 from time import sleep
-from config import TTY, BAUDRATE, IPADDRESS
+from config import TTY, BAUDRATE, IPADDRESS, PORT
 from utils import average_last_n
 import zmq
 
@@ -57,7 +58,7 @@ class GPS:
         self.coordinates = []
         context = zmq.Context()
         self.socket = context.socket(zmq.PUB)
-        self.socket.connect(f"tcp://{IPADDRESS}")
+        self.socket.connect(f"tcp://{IPADDRESS}:{PORT}")
         self._test_data = test_data
 
     def run(self):

@@ -1,11 +1,13 @@
+#!/home/debain/gpslib/env/bin/python
+import warnings
+warnings.filterwarnings("ignore")
 from rcpy import mpu9250
 from time import sleep
-from config import IPADDRESS
+from config import IPADDRESS, PORT
 import json
-import warnings
+import os
+import sys
 import zmq
-
-warnings.filterwarnings('ignore')
 
 """
 accel: 3-axis accelerations (m/s 2)
@@ -21,7 +23,7 @@ class IMU:
     def __init__(self):
         context = zmq.Context()
         self.socket = context.socket(zmq.PUB)
-        self.socket.connect(f"tcp://{IPADDRESS}")
+        self.socket.connect(f"tcp://{IPADDRESS}:{PORT}")
         try:
             self._imu = mpu9250.IMU(enable_dmp=True,
                                     dmp_sample_rate=4,
@@ -33,7 +35,14 @@ class IMU:
 
     def run(self):
         while True:
-            data = self._imu.read()
+            try:
+                data = self._imu.read()
+            except KeyboardInterrupt:
+                try:
+                    sys.exit(130)
+                except SystemExit:
+                    os._exit(130)
+
             sleep(0.01)
             data['gyro'] = mpu9250.read_gyro_data()
             data['accel'] = mpu9250.read_accel_data()
