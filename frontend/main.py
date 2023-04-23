@@ -5,11 +5,11 @@ from pathlib import Path
 from fastapi.templating import Jinja2Templates
 
 BASE_PATH = Path(__file__).resolve().parent
-TEMPLATES = Jinja2Templates(directory=str(BASE_PATH / "templates"))
+
 
 app = FastAPI(title="Dashboard",)
+TEMPLATES = Jinja2Templates(directory=str(BASE_PATH / "templates"))
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
 
 
 class ConnectionManager:
@@ -35,7 +35,7 @@ manager = ConnectionManager()
 
 
 @app.get("/", status_code=200)
-async def get(request: Request) -> dict:
+async def get(request: Request):
 
     return TEMPLATES.TemplateResponse(
         "index.html",
