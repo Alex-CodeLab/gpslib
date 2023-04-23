@@ -174,3 +174,22 @@ a.link {
   stroke-dasharray: none;
   stroke-width: 5;
 }
+
+.card: {
+    background-color: #555,
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: bolder;
+}
+
+h2 {
+    font-size: 1.75rem;
+    font-weight: bolder;
+}
+
+h3 {
+    font-size: 1.25rem;
+    font-weight: bolder;
+}

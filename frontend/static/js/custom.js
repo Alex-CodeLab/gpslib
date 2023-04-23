@@ -39,7 +39,7 @@ var options1 = {
         name: {
           show: true,
           fontSize: '16px',
-          color: undefined,
+          color: '#555',
           offsetY: 80
         },
         value: {
