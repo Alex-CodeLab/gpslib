@@ -13,13 +13,15 @@ other devices.
 
 
 
-![](https://github.com/Alex-CodeLab/gpslib/blob/main/bbb_gps.jpg)
-![](https://github.com/Alex-CodeLab/gpslib/blob/main/dashboard.png)
+![](https://github.com/Alex-CodeLab/gpslib/blob/main/docs/img/bbb_gps.jpg)
+![](https://github.com/Alex-CodeLab/gpslib/blob/main/docs/img/dashboard.png)
+![](https://github.com/Alex-CodeLab/gpslib/blob/main/docs/img/darkmode.png)
 
 Todo:
 - [x] tests
 - [x] CLI
 - [x] configure magnetometer, digital compass - IMU
 - [x] dashboard
-- [ ] 
-
+- [x] dark mode
+- [ ] connect websockets to dashboard
+- [ ] replace FastApi with Rust (actix-web)

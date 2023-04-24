@@ -8,14 +8,19 @@ var options1 = {
     type: "radialBar",
   },
   series: [valueToPercent(20)],
-  colors: ['#00ff00'],
+  colors: ['#44dd66'],
 
   plotOptions: {
     radialBar: {
+    hollow: {
+        margin: 5,
+        size: "60%"
+      },
+
       startAngle: -135,
       endAngle: 135,
       track: {
-        background: '#000',
+        background: '#000099',
         startAngle: -135,
         endAngle: 135,
       },
@@ -23,27 +28,28 @@ var options1 = {
           show: true,
           startAngle: undefined,
           endAngle: undefined,
-          background: '#f2f2f2',
-          strokeWidth: '27%',
-          opacity: 1,
+          background: '#aaa',
+          strokeWidth: '17%',
+          opacity: .1,
           margin: 5,
           dropShadow: {
               enabled: true,
               top: 0,
               left: 0,
-              blur: 1,
-              opacity: .1
+              blur: 10,
+              opacity: 8
           }
       },
       dataLabels: {
         name: {
           show: true,
           fontSize: '16px',
-          color: '#555',
+          color: '#ddd',
           offsetY: 80
         },
         value: {
           fontSize: "40px",
+          color: "#eee",
           show: true,
           formatter: function (val) {
             return val/4
