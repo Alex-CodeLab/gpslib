@@ -12,7 +12,6 @@ to use the data. Also, it allows the sensors or gps to be easily replaced with a
 other devices.
 
 
-
 ![](https://github.com/Alex-CodeLab/gpslib/blob/main/docs/img/bbb_gps.jpg)
 ![](https://github.com/Alex-CodeLab/gpslib/blob/main/docs/img/dashboard.png)
 ![](https://github.com/Alex-CodeLab/gpslib/blob/main/docs/img/darkmode.png)
@@ -24,4 +23,6 @@ Todo:
 - [x] dashboard
 - [x] dark mode
 - [ ] connect websockets to dashboard
+- [ ] Gyroscope chart
 - [ ] replace FastApi with Rust (actix-web)
+- [ ] install instructions
