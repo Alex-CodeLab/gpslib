@@ -67,5 +67,3 @@ if __name__ == '__main__':
                     stop_program(int(pid))
             except IOError:  # proc has already terminated
                 continue
-
-

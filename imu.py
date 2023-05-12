@@ -1,5 +1,6 @@
 #!/home/debain/gpslib/env/bin/python
 import warnings
+
 warnings.filterwarnings("ignore")
 from rcpy import mpu9250
 from time import sleep

@@ -1,144 +1,148 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Pylot</title>
-        	<meta charset="utf-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+    <title>Pylot</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-            <link href="{{ url_for('static', path='/css/dark.css') }}" rel="stylesheet" />
-            <link href="{{ url_for('static', path='/css/apexcharts.css') }}" rel="stylesheet" />
-            <link href="{{ url_for('static', path='/css/custom.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', path='/css/dark.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', path='/css/apexcharts.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', path='/css/custom.css') }}" rel="stylesheet"/>
 
-            <script src="{{ url_for('static', path='/js/app.js') }}" ></script>
-            <script src="{{ url_for('static', path='/js/apexcharts.min.js') }}" ></script>
+    <script src="{{ url_for('static', path='/js/app.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/apexcharts.min.js') }}"></script>
 
-    </head>
+</head>
 
-    <body>
-    	<div class="wrapper">
-		<nav id="sidebar" class="sidebar js-sidebar">
-			<div class="sidebar-content js-simplebar">
-			    <a class="sidebar-brand" href="index.html"> <span class="align-middle"> </span> </a>
+<body>
+<div class="wrapper">
+    <nav id="sidebar" class="sidebar js-sidebar">
+        <div class="sidebar-content js-simplebar">
+            <a class="sidebar-brand" href="index.html"> <span class="align-middle"> </span> </a>
 
-				<ul class="sidebar-nav">
-					<li class="sidebar-header">
-						Pages
-					</li>
+            <ul class="sidebar-nav">
+                <li class="sidebar-header">
+                    Pages
+                </li>
 
-					<li class="sidebar-item active">
-						<a class="sidebar-link" href="index.html">
-                    <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+                <li class="sidebar-item active">
+                    <a class="sidebar-link" href="index.html">
+                        <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                     </a>
-					</li>
+                </li>
 
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="pages-profile.html">
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="pages-profile.html">
                         <i class="align-middle" data-feather="user"></i> <span class="align-middle">Logs</span>
                     </a>
-					</li>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="main">
+        <nav class="navbar navbar-expand navbar-light navbar-bg">
+            <a class="sidebar-toggle js-sidebar-toggle">
+                <i class="hamburger align-self-center"></i>
+            </a>
+            <div class="navbar-collapse collapse">
+                <ul class="navbar-nav navbar-align">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                            <i class="align-middle" data-feather="settings"></i>
+                        </a>
+
+                        <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                            <span class="text-dark"> </span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1"
+                                                                                  data-feather="user"></i> Profile</a>
+                            <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i>
+                                Analytics</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="index.html"><i class="align-middle me-1"
+                                                                          data-feather="settings"></i> Settings &
+                                Privacy</a>
+                            <a class="dropdown-item" href="#"><i class="align-middle me-1"
+                                                                 data-feather="help-circle"></i> Help Center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Log out</a>
+                        </div>
+                    </li>
                 </ul>
             </div>
-		</nav>
+        </nav>
 
 
-		<div class="main">
-			<nav class="navbar navbar-expand navbar-light navbar-bg">
-				<a class="sidebar-toggle js-sidebar-toggle">
-          <i class="hamburger align-self-center"></i>
-        </a>
-				<div class="navbar-collapse collapse">
-					<ul class="navbar-nav navbar-align">
-
-						<li class="nav-item dropdown">
-							<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
-                <i class="align-middle" data-feather="settings"></i>
-              </a>
-
-							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                                <span class="text-dark"> </span>
-                            </a>
-							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
-								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy</a>
-								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">Log out</a>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</nav>
-
-
-
-		<main class="content">
+        <main class="content">
 
             <div class="container-fluid p-0">
 
-					<div class="row">
-						<div class="col-md-6">
-							<div class="card">
-								<div class="card-body">
-									<div class="row">
-										<div id="chart1"> </div>
-									</div>
-								</div>
-							</div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div id="chart1"></div>
+                                </div>
+                            </div>
+                        </div>
 
-							<div class="card">
-								<div class="card-body">
-									<div class="container">
-									  <div class="row">
-										<div class="col-8 border border-start-0 border-top-0">
-											<h5 class="card-title mb-0">Position</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-8 border border-start-0 border-top-0">
+                                            <h5 class="card-title mb-0">Position</h5>
 
-											<h2 class="mt-1 mb-3">50°45'.165 N</h2>
-											<h2 class="mt-1 mb-3">01°07'.424 E</h2>
-										</div>
-										<div class="col-4 border border-start-0 border-top-0 border-end-0">
-											<h5 class="card-title mb-0">Speed</h5>
-												<h1 class="mt-1 mb-3">9.3</h1>
-										</div>
-									  	</div>
+                                            <h2 class="mt-1 mb-3">50°45'.165 N</h2>
+                                            <h2 class="mt-1 mb-3">01°07'.424 E</h2>
+                                        </div>
+                                        <div class="col-4 border border-start-0 border-top-0 border-end-0">
+                                            <h5 class="card-title mb-0">Speed</h5>
+                                            <h1 class="mt-1 mb-3">9.3</h1>
+                                        </div>
+                                    </div>
 
-									    <div class="row">
-											<div class="col-4 border border-start-0 border-top-0 border-end-0">
-												<h5 class="card-title mb-0">Trip</h5>
-												<h3 class="mt-1 mb-3">9.1</h3>
-											</div>
-											<div class="col-4 border border-start-0 border-top-0 border-end-0">
-												<h5 class="card-title mb-0">COG</h5>
-												<h3 class="mt-1 mb-3">320°</h3>
-											</div>
-											<div class="col-4 border border-start-0 border-top-0 border-end-0">
-												<h5 class="card-title mb-0">Depth</h5>
-												<h3 class="mt-1 mb-3">32.8</h3>
-											</div>
-									  	</div>
+                                    <div class="row">
+                                        <div class="col-4 border border-start-0 border-top-0 border-end-0">
+                                            <h5 class="card-title mb-0">Trip</h5>
+                                            <h3 class="mt-1 mb-3">9.1</h3>
+                                        </div>
+                                        <div class="col-4 border border-start-0 border-top-0 border-end-0">
+                                            <h5 class="card-title mb-0">COG</h5>
+                                            <h3 class="mt-1 mb-3">320°</h3>
+                                        </div>
+                                        <div class="col-4 border border-start-0 border-top-0 border-end-0">
+                                            <h5 class="card-title mb-0">Depth</h5>
+                                            <h3 class="mt-1 mb-3">32.8</h3>
+                                        </div>
+                                    </div>
 
-									</div>
-							    </div>
+                                </div>
+                            </div>
 
-							</div> <!-- /card -->
+                        </div> <!-- /card -->
 
 
-							<h2>: <span id="ws-id"></span></h2>
-							<form action="" onsubmit="sendMessage(event)">
-								<input type="text" id="messageText" autocomplete="off"/>
-								<button>Send</button>
-							</form>
-							<ul id='messages'>
-							</ul>
+                        <h2>: <span id="ws-id"></span></h2>
+                        <form action="" onsubmit="sendMessage(event)">
+                            <input type="text" id="messageText" autocomplete="off"/>
+                            <button>Send</button>
+                        </form>
+                        <ul id='messages'>
+                        </ul>
 
-							<div class="wrapper"></div>
+                        <div class="wrapper"></div>
 
-							</div> <!-- /col -->
-						</div>	<!-- /row -->
+                    </div> <!-- /col -->
+                </div>    <!-- /row -->
 
-					</div> <!-- /container -->
+            </div> <!-- /container -->
 
         </main>
 
@@ -159,9 +163,10 @@
                 input.value = ''
                 event.preventDefault()
             }
+
         </script>
-        <script src="/static/js/custom.js" ></script>
-		</div>
-		</div>
-    </body>
+        <script src="/static/js/custom.js"></script>
+    </div>
+</div>
+</body>
 </html>

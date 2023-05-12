@@ -6,6 +6,7 @@ import asyncio
 import websockets
 from config import TTY, BAUDRATE, IPADDRESS, PORT
 
+
 async def handler(websocket, path):
     await websocket.send('test reply')
 
@@ -17,7 +18,6 @@ class ZeroPubSub:
         self.subscribe_socket = self.context.socket(zmq.SUB)
         self.subscribe_socket.bind(subscribe_address)
         self.subscribe_socket.setsockopt(zmq.SUBSCRIBE, b"")
-        self.websocketserver = websockets.serve(handler, "localhost", 8008)
 
     async def start(self):
         while True:
@@ -29,5 +29,6 @@ class ZeroPubSub:
 if __name__ == "__main__":
     pubsub = ZeroPubSub(f"tcp://{IPADDRESS}:{PORT}")
     asyncio.run(pubsub.start())
-    asyncio.get_event_loop().run_until_complete(pubsub.websocketserver)
+    start_server = websockets.serve(handler, "localhost", 8000)
+    asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()

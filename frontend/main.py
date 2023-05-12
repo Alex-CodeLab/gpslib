@@ -6,8 +6,7 @@ from fastapi.templating import Jinja2Templates
 
 BASE_PATH = Path(__file__).resolve().parent
 
-
-app = FastAPI(title="Dashboard",)
+app = FastAPI(title="Dashboard", )
 TEMPLATES = Jinja2Templates(directory=str(BASE_PATH / "templates"))
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -36,7 +35,6 @@ manager = ConnectionManager()
 
 @app.get("/", status_code=200)
 async def get(request: Request):
-
     return TEMPLATES.TemplateResponse(
         "index.html",
         {"request": request, },
