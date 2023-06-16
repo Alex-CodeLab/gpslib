@@ -1,14 +1,19 @@
 #!/home/debain/gpslib/env/bin/python
+# pylint: disable=import-error, wrong-import-position, pointless-string-statement, consider-using-sys-exit, broad-exception-caught
+
 import json
+import logging
 import os
 import sys
-import warnings
 from time import sleep
-import zmq
+import warnings
 warnings.filterwarnings("ignore")
+import zmq
 from rcpy import mpu9250
+
 from config import IPADDRESS, PORT
 
+logging.basicConfig(filename='/var/log/imu.log', level=logging.INFO)
 
 """
     accel: 3-axis accelerations (m/s 2)
@@ -41,6 +46,7 @@ class IMU:
                                     enable_fusion=True)
         except Exception as e:
             print('check calibration', e)
+            logging.exception(e)
             exit()
 
     def run(self):

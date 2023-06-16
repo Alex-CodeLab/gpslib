@@ -1,8 +1,12 @@
 import unittest
 from datetime import datetime
 from unittest import TestCase
+import os
+import sys
 
 from utils import distance, speed_kn, bearing, average_last_n
+root_folder = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(root_folder)
 
 class UtilsTesting(TestCase):
 
@@ -75,8 +79,9 @@ class TestBearing(TestCase):
         # Test case 5: Coordinates of two points with the same longitude (bearing should be 0 or 180 degrees)
         lat1, lon1 = 0, 0
         lat2, lon2 = 1, 0
+        lat3, lon3 = 1, 0
         bearing1 = bearing(lat1, lon1, lat2, lon2)
-        bearing2 = bearing(lat2, lon2, lat1, lon1)
+        bearing2 = bearing(lat3, lon3, lat1, lon1)
         self.assertIn(bearing1, [0, 180])
         self.assertIn(bearing2, [0, 180])
 

@@ -2,6 +2,7 @@
 """
 GPS Handler
 """
+# pylint: disable=import-error, inconsistent-return-statements, useless-suppression
 from __future__ import annotations
 
 import contextlib
@@ -9,11 +10,11 @@ import json
 import logging
 from datetime import datetime
 from time import sleep
-from typing import Optional, Tuple
 
 import zmq
 from haversine import haversine, Unit
-from pyubx2 import UBXReader
+from pynmeagps import NMEAMessage
+from pyubx2 import UBXReader, UBXStreamError, UBXParseError, UBXMessage
 from serial import Serial
 
 from config import TTY, BAUDRATE, IPADDRESS, PORT
@@ -21,36 +22,6 @@ from utils import average_last_n
 
 logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
 
-"""
-1   UTC of this position report, hh is hours, mm is minutes, ss.ss is seconds.
-2   Latitude, dd is degrees, mm.mm is minutes
-3   N or S (North or South)
-4   Longitude, dd is degrees, mm.mm is minutes
-5   E or W (East or West)
-6   GPS Quality Indicator (non null)
-    0 - fix not available,
-    1 - GPS fix,
-    2 - Differential GPS fix (values above 2 are 2.3 features)
-    3 = PPS fix
-    4 = Real Time Kinematic
-    5 = Float RTK
-    6 = estimated (dead reckoning)
-    7 = Manual input mode
-    8 = Simulation mode
-7   Number of satellites in use, 00 - 12
-8   Horizontal Dilution of precision (meters)
-9   Antenna Altitude above/below mean-sea-level (geoid) (in meters)
-10  Units of antenna altitude, meters
-11  Geoidal separation, the difference between the WGS-84 earth ellipsoid and mean-sea-level (geoid), "-" means 
-    mean-sea-level below ellipsoid
-12  Units of geoidal separation, meters
-13  Age of differential GPS data, time in seconds since last SC104 type 1 or 9 update, null field when DGPS is not used
-14  Differential reference station ID, 0000-1023
-15  Checksum
-<CR> Carriage return, end tag
-<LF> line feed, end tag
-
-"""
 
 stream = Serial(TTY, BAUDRATE, timeout=3)
 ubr = UBXReader(stream, protfilter=7)
@@ -79,7 +50,7 @@ class GPS:
     msgtype = ['GN', ]
     msg_ids = ['GLL', 'GGA', 'RMC']
 
-    def __init__(self, test_data: (list| None)):
+    def __init__(self, test_data: (list| None)=None):
         print('init ....')
         self.spd = None
         self.coordinates = []
@@ -122,7 +93,7 @@ class GPS:
                 _, self.parsed_data = ubr.read()
                 if self.parsed_data.msgID == 'RMC':
                     self.spd = self.parsed_data.spd
-            except Exception as e:
+            except UBXParseError as e:
                 print('ERROR:  ', e)
                 logging.error(e)
             try:
@@ -137,24 +108,24 @@ class GPS:
                     else:
                         self.coordinates.append((self.parsed_data.lat, self.parsed_data.lon, dt))
 
-            except Exception as e:
+            except UBXStreamError as e:
                 print('ERROR:  ', e)
                 logging.error(e)
 
-    def _validate_msg(self):
+    def _validate_msg(self) -> bool:
         return (
             self.parsed_data.talker in self.msgtype
             and self.parsed_data.msgID in self.msg_ids
             and len(str(self.parsed_data.time).split('.')) == 1
         )
 
-    def _make_dt(self):
+    def _make_dt(self) -> datetime:
         """Create timestamp"""
         today = datetime.now().strftime('%y-%m-%d')
         ts = f'{str(self.parsed_data.time)} {today}'
         return datetime.strptime(ts, '%H:%M:%S %y-%m-%d')
 
-    def make_gnss(self, parsed_data, dt) -> json:
+    def make_gnss(self, parsed_data: [UBXMessage| NMEAMessage], dt:datetime) -> json:
         """
         Creates a GNSS object.
 

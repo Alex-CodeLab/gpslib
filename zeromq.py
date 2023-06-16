@@ -8,7 +8,7 @@ import zmq.asyncio
 from config import IPADDRESS, PORT
 
 
-async def handler(websocket, path):
+async def handler(websocket):
     await websocket.send('test reply')
 
 
@@ -24,7 +24,7 @@ class ZeroPubSub:
         while True:
             with await self.subscribe_socket.recv() as message:
                 print(message)
-                await self.websocketserver.send(message)
+                # await self.websocketserver.send(message)
 
 
 if __name__ == "__main__":

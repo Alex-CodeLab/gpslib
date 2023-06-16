@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-from typing import Tuple
 
 # Constants
 A = 6378137.0  # Semi-major axis of the earth (m)
@@ -75,7 +74,7 @@ def average_last_n(coords):
         try:
             lat_sum += float(coords[i][0])
             lon_sum += float(coords[i][1])
-        except Exception:
+        except (ValueError, TypeError):
             return None, None, None
     lat_avg = lat_sum / n
     lon_avg = lon_sum / n
@@ -108,24 +107,24 @@ class SensorFusion:
         self.vel_down = 0.0
 
         self.prev_time: [float| None] = None
-        self.prev_accel_x: [float| None] = None
-        self.prev_accel_y: [float| None] = None
-        self.prev_accel_z: [float| None] = None
-        self.prev_gyro_x: [float| None]= None
-        self.prev_gyro_y: [float| None]= None
-        self.prev_gyro_z: [float| None]= None
+        # self.prev_accel_x: [float| None] = None
+        # self.prev_accel_y: [float| None] = None
+        # self.prev_accel_z: [float| None] = None
+        self.prev_accel: [float, float, float] = []  # x,y,z
+        self.prev_gyro : [float, float, float] = []  # x,y,z
+
 
     def fuse_data(self, time: float, accel_x: float, accel_y: float, accel_z: float, gyro_x: float, gyro_y: float,
-                  gyro_z: float) -> Tuple[float, float, float, float, float, float]:
+                  gyro_z: float) -> tuple[float, float, float, float, float, float]:
         """
                Fuses sensor data to estimate position and velocity.
         """
         dt = time - self.prev_time if self.prev_time is not None else 0.0
 
         # Calculate new velocity using trapezoidal integration
-        vel_north_new = self.vel_north + (accel_x + self.prev_accel_x) / 2.0 * dt
-        vel_east_new = self.vel_east + (accel_y + self.prev_accel_y) / 2.0 * dt
-        vel_down_new = self.vel_down + (accel_z + self.prev_accel_z) / 2.0 * dt
+        vel_north_new = self.vel_north + (accel_x + self.prev_accel[0]) / 2.0 * dt
+        vel_east_new = self.vel_east + (accel_y + self.prev_accel[1]) / 2.0 * dt
+        vel_down_new = self.vel_down + (accel_z + self.prev_accel[2]) / 2.0 * dt
 
         # Calculate new position using trapezoidal integration
         lat_new = self.lat + (
@@ -134,9 +133,9 @@ class SensorFusion:
         alt_new = self.alt - (self.vel_down + vel_down_new) / 2.0 * dt
 
         # Calculate new velocity using gyroscope data
-        vel_north_new += self.prev_gyro_x * dt
-        vel_east_new += self.prev_gyro_y * dt
-        vel_down_new += self.prev_gyro_z * dt
+        vel_north_new += self.prev_gyro[0] * dt
+        vel_east_new += self.prev_gyro[1] * dt
+        vel_down_new += self.prev_gyro[2] * dt
 
         # Update class variables
         self.lat = lat_new
@@ -147,11 +146,7 @@ class SensorFusion:
         self.vel_down = vel_down_new
 
         self.prev_time = time
-        self.prev_accel_x = accel_x
-        self.prev_accel_y = accel_y
-        self.prev_accel_z = accel_z
-        self.prev_gyro_x = gyro_x
-        self.prev_gyro_y = gyro_y
-        self.prev_gyro_z = gyro_z
+        self.prev_accel = [accel_x, accel_y, accel_z]
+        self.prev_gyro = [gyro_x, gyro_y, gyro_z]
 
         return lat_new, lon_new, alt_new, vel_north_new, vel_east_new, vel_down_new
