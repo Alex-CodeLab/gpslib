@@ -1,0 +1,11 @@
+asyncio
+pyzmq
+zmq
+pyubx2
+docopt
+fastapi
+websockets
+pyserial==3.5
+haversine
+pyubx2
+numpy
