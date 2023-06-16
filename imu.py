@@ -21,7 +21,16 @@ from config import IPADDRESS, PORT
 
 
 class IMU:
+    """
+    Represents an Inertial Measurement Unit (IMU) object that reads data from an MPU9250 sensor and publishes it over a ZeroMQ socket.
+
+    Attributes:
+        socket (zmq.Socket): ZeroMQ socket for publishing IMU data.
+
+    """
     def __init__(self):
+        """ Initializes the IMU object by setting up the ZeroMQ socket and MPU9250 sensor.
+        """
         context = zmq.Context()
         self.socket = context.socket(zmq.PUB)
         self.socket.connect(f"tcp://{IPADDRESS}:{PORT}")
@@ -35,6 +44,12 @@ class IMU:
             exit()
 
     def run(self):
+        """
+        Continuously reads data from the MPU9250 sensor and publishes it over the ZeroMQ socket.
+
+        This method runs an infinite loop that reads data from the MPU9250 sensor. The sensor data, including gyroscope,
+        accelerometer, and magnetometer readings, is published over the ZeroMQ socket as a JSON-encoded message.
+        """
         while True:
             try:
                 data = self._imu.read()

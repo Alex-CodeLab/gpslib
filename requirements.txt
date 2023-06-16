@@ -9,3 +9,4 @@ websockets
 pyserial==3.5
 haversine
 pyubx2
+numpy
