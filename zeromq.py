@@ -1,10 +1,11 @@
 #!/home/debain/gpslib/env/bin/python
+import asyncio
+
+import websockets
 import zmq
 import zmq.asyncio
-from config import IPADDRESS
-import asyncio
-import websockets
-from config import TTY, BAUDRATE, IPADDRESS, PORT
+
+from config import IPADDRESS, PORT
 
 
 async def handler(websocket, path):
@@ -21,9 +22,9 @@ class ZeroPubSub:
 
     async def start(self):
         while True:
-            message = await self.subscribe_socket.recv()
-            print(message)
-            await self.websocketserver.send(message)
+            with await self.subscribe_socket.recv() as message:
+                print(message)
+                await self.websocketserver.send(message)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import math
-from typing import Optional, Tuple
+from typing import Tuple
 
 # Constants
 A = 6378137.0  # Semi-major axis of the earth (m)
@@ -36,14 +38,15 @@ def distance(latlongalt1, latlongalt2):
     return math.sqrt(d ** 2 + delta_alt ** 2)
 
 
-# Function to calculate the speed between two points in kilometers per hour
 def speed(latlon1, time1, latlon2, time2):
+    """Function to calculate the speed between two points in kilometers per hour"""
     d = distance(latlon1, latlon2)
     t = (time2 - time1).total_seconds() / 3600
     return d / t
 
 
 def speed_kn(latlon1, time1, latlon2, time2):
+    """Function to calculate the speed between two points in knots"""
     d = distance(latlon1, latlon2)
     t = (time2 - time1).total_seconds() / 3600
     kmh = d / t
@@ -51,8 +54,8 @@ def speed_kn(latlon1, time1, latlon2, time2):
     return knots, kmh
 
 
-# Function to calculate the bearing between two points
 def bearing(lat1, lon1, lat2, lon2):
+    """Function to calculate the bearing between two points"""
     d_lon = math.radians(lon2 - lon1)
     lat1 = math.radians(lat1)
     lat2 = math.radians(lat2)
@@ -62,6 +65,7 @@ def bearing(lat1, lon1, lat2, lon2):
 
 
 def average_last_n(coords):
+    """Calculate average of last coordinates"""
     n = len(coords)
     if n < 2:
         return None, None, None
@@ -79,7 +83,22 @@ def average_last_n(coords):
 
 
 class SensorFusion:
+    """
+        Represents a sensor fusion object that integrates accelerometer and gyroscope data to estimate position and velocity.
+
+    """
+
     def __init__(self, lat: float, lon: float, alt: float) -> None:
+        """
+        Initializes the SensorFusion object with initial position and velocity values.
+
+        Args:
+            lat (float): Initial latitude coordinate.
+            lon (float): Initial longitude coordinate.
+            alt (float): Initial altitude coordinate.
+
+        This method sets up the SensorFusion object with the provided initial position and velocity values.
+        """
         self.lat = lat
         self.lon = lon
         self.alt = alt
@@ -88,16 +107,19 @@ class SensorFusion:
         self.vel_east = 0.0
         self.vel_down = 0.0
 
-        self.prev_time: Optional[float] = None
-        self.prev_accel_x: Optional[float] = None
-        self.prev_accel_y: Optional[float] = None
-        self.prev_accel_z: Optional[float] = None
-        self.prev_gyro_x: Optional[float] = None
-        self.prev_gyro_y: Optional[float] = None
-        self.prev_gyro_z: Optional[float] = None
+        self.prev_time: [float| None] = None
+        self.prev_accel_x: [float| None] = None
+        self.prev_accel_y: [float| None] = None
+        self.prev_accel_z: [float| None] = None
+        self.prev_gyro_x: [float| None]= None
+        self.prev_gyro_y: [float| None]= None
+        self.prev_gyro_z: [float| None]= None
 
     def fuse_data(self, time: float, accel_x: float, accel_y: float, accel_z: float, gyro_x: float, gyro_y: float,
                   gyro_z: float) -> Tuple[float, float, float, float, float, float]:
+        """
+               Fuses sensor data to estimate position and velocity.
+        """
         dt = time - self.prev_time if self.prev_time is not None else 0.0
 
         # Calculate new velocity using trapezoidal integration

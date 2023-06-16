@@ -1,22 +1,22 @@
 #!/home/debain/gpslib/env/bin/python
-import warnings
-
-warnings.filterwarnings("ignore")
-from rcpy import mpu9250
-from time import sleep
-from config import IPADDRESS, PORT
 import json
 import os
 import sys
+import warnings
+from time import sleep
 import zmq
+warnings.filterwarnings("ignore")
+from rcpy import mpu9250
+from config import IPADDRESS, PORT
+
 
 """
-accel: 3-axis accelerations (m/s 2)
-gyro: 3-axis angular velocities (degree/s)
-mag: 3D magnetic field vector in (μT)
-quat: orientation quaternion
-tb: pitch/roll/yaw X/Y/Z angles (radians)
-head: heading from magnetometer (radians)
+    accel: 3-axis accelerations (m/s 2)
+    gyro: 3-axis angular velocities (degree/s)
+    mag: 3D magnetic field vector in (μT)
+    quat: orientation quaternion
+    tb: pitch/roll/yaw X/Y/Z angles (radians)
+    head: heading from magnetometer (radians)
 """
 
 

@@ -1,7 +1,8 @@
-from unittest import TestCase
-from utils import distance, speed_kn, bearing, average_last_n
 import unittest
 from datetime import datetime
+from unittest import TestCase
+
+from utils import distance, speed_kn, bearing, average_last_n
 
 class UtilsTesting(TestCase):
 

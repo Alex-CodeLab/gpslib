@@ -12,21 +12,22 @@ Options:
   -h --help     Show this screen.
 
 """
-from docopt import docopt
 import os
 import signal
 import subprocess
-from config import VENV, PATH
+
+from docopt import docopt
+
+from config import PATH
 
 
-def start_program(program_file):
+def start_program(prog_file):
     try:
         # Start the program as a subprocess
-        proc = subprocess.Popen([f"{PATH}/{program_file}"])
-        print(f"Started {program_file} with PID {proc.pid}")
+        with subprocess.Popen([f"{PATH}/{prog_file}"]) as proc:
+            print(f"Started {prog_file} with PID {proc.pid}")
     except Exception as e:
-        print(f"Failed to start {program_file}: {e}")
-
+        print(f"Failed to start {prog_file}: {e}")
 
 def stop_program(pid):
     try:
@@ -39,13 +40,15 @@ def stop_program(pid):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='AP Control')
+    program_file = None
     if arguments['list']:
         pids = [pid for pid in os.listdir('/proc') if pid.isdigit()]
         for pid in pids:
-            cmd = open(os.path.join('/proc', pid, 'cmdline'), 'rb').read().decode('utf-8')
-            for cm in cmd:
-                if cm in ['gps.py', 'imu.py', 'zmq.py']:
-                    print(pid, cm)
+            with open(os.path.join('/proc', pid, 'cmdline'), 'rb') as file:
+                cmd = file.read().decode('utf-8')
+                for cm in cmd:
+                    if cm in ('gps.py', 'imu.py', 'zmq.py'):
+                        print(pid, cm)
 
     if arguments['gps']:
         program_file = 'gps.py'

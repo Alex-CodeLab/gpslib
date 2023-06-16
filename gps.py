@@ -1,16 +1,23 @@
 #!/home/debain/gpslib/env/bin/python
+"""
+GPS Handler
+"""
+from __future__ import annotations
+
 import contextlib
-from datetime import datetime
-from typing import Optional, Tuple
-from haversine import haversine, Unit
-from serial import Serial
-from pyubx2 import UBXReader
-import logging
 import json
+import logging
+from datetime import datetime
 from time import sleep
+from typing import Optional, Tuple
+
+import zmq
+from haversine import haversine, Unit
+from pyubx2 import UBXReader
+from serial import Serial
+
 from config import TTY, BAUDRATE, IPADDRESS, PORT
 from utils import average_last_n
-import zmq
 
 logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
 
@@ -34,7 +41,8 @@ logging.basicConfig(filename='/var/log/gps.log', level=logging.INFO)
 8   Horizontal Dilution of precision (meters)
 9   Antenna Altitude above/below mean-sea-level (geoid) (in meters)
 10  Units of antenna altitude, meters
-11  Geoidal separation, the difference between the WGS-84 earth ellipsoid and mean-sea-level (geoid), "-" means mean-sea-level below ellipsoid
+11  Geoidal separation, the difference between the WGS-84 earth ellipsoid and mean-sea-level (geoid), "-" means 
+    mean-sea-level below ellipsoid
 12  Units of geoidal separation, meters
 13  Age of differential GPS data, time in seconds since last SC104 type 1 or 9 update, null field when DGPS is not used
 14  Differential reference station ID, 0000-1023
@@ -49,10 +57,29 @@ ubr = UBXReader(stream, protfilter=7)
 
 
 class GPS:
+    """
+    Represents a GPS object that handles data retrieval and processing from a GPS device.
+
+    Attributes:
+        msgtype (list[str]): A list of valid message types.
+        msg_ids (list[str]): A list of valid message IDs.
+        spd (float): Current speed.
+        coordinates (list[tuple]): A list of GPS coordinates.
+        socket (zmq.Socket): ZeroMQ socket for publishing data.
+        _test_data (list, optional): Test data for simulation (default: None).
+
+    Methods:
+        __init__(test_data=None): Initializes the GPS object.
+        run(): Starts the GPS data sending process.
+        get_data() -> tuple, optional: Retrieves GPS data.
+        make_gnss(parsed_data, dt) -> dict: Creates a GNSS object.
+
+    """
+
     msgtype = ['GN', ]
     msg_ids = ['GLL', 'GGA', 'RMC']
 
-    def __init__(self, test_data: Optional[list] = None):
+    def __init__(self, test_data: (list| None)):
         print('init ....')
         self.spd = None
         self.coordinates = []
@@ -60,57 +87,87 @@ class GPS:
         self.socket = context.socket(zmq.PUB)
         self.socket.connect(f"tcp://{IPADDRESS}:{PORT}")
         self._test_data = test_data
+        self.parsed_data = None
 
     def run(self):
-        print('start sending')
-        self.coordinates, nmh, knots = [], None, None
-        while True:
+        """
+        Starts the GPS data sending process.
 
+        This method initiates the GPS data sending process. It clears the coordinates list and starts a loop to
+        retrieve and process GPS data indefinitely.
+        """
+        print('start sending')
+        self.coordinates = []
+        while True:
             parsed_data = self.get_data()
-            # print(parsed_data)
             if parsed_data and not self._test_data:
                 self.socket.send_multipart([b'', json.dumps(parsed_data).encode('utf-8')])
             else:
                 sleep(.1)
 
-    def get_data(self) -> Optional[Tuple]:
+    def get_data(self) -> [tuple| None]:
+        """
+        Retrieves GPS data.
 
+        Returns:
+            tuple, optional: A tuple containing the retrieved GPS data.
+
+        This method retrieves GPS data either from the test data or from a connected device. It processes the data,
+        calculates average latitude and longitude, and creates a GNSS object if enough coordinates are available.
+        """
         if self._test_data:
             return self._test_data.pop(0)
         if stream.in_waiting:
-
             try:
-                raw_data, parsed_data = ubr.read()
-                if parsed_data.msgID == 'RMC':
-                    self.spd = parsed_data.spd
-                    # print(self.spd)
-
+                _, self.parsed_data = ubr.read()
+                if self.parsed_data.msgID == 'RMC':
+                    self.spd = self.parsed_data.spd
+            except Exception as e:
+                print('ERROR:  ', e)
+                logging.error(e)
+            try:
                 # If the parsed message is of a valid message type and message ID, and the timestamp is valid
-                if (
-                        parsed_data.talker in self.msgtype
-                        and parsed_data.msgID in self.msg_ids
-                        and len(str(parsed_data.time).split('.')) == 1
-                ):
-                    today = datetime.now().strftime('%y-%m-%d')
-                    ts = f'{str(parsed_data.time)} {today}'
-                    dt = datetime.strptime(ts, '%H:%M:%S %y-%m-%d')
-
-                    # Calculate the average latitude and longitude
-                    lat, lon, _ = average_last_n(self.coordinates)
+                if self._validate_msg():
+                    dt = self._make_dt()
 
                     # If there are at least 4 coordinates in the list, create a GNSS object
                     if len(self.coordinates) >= 4:
-
                         with contextlib.suppress(Exception):
-                            return self.make_gnss(parsed_data, dt)
+                            return self.make_gnss(self.parsed_data, dt)
                     else:
-                        self.coordinates.append((parsed_data.lat, parsed_data.lon, dt))
+                        self.coordinates.append((self.parsed_data.lat, self.parsed_data.lon, dt))
 
             except Exception as e:
                 print('ERROR:  ', e)
                 logging.error(e)
 
+    def _validate_msg(self):
+        return (
+            self.parsed_data.talker in self.msgtype
+            and self.parsed_data.msgID in self.msg_ids
+            and len(str(self.parsed_data.time).split('.')) == 1
+        )
+
+    def _make_dt(self):
+        """Create timestamp"""
+        today = datetime.now().strftime('%y-%m-%d')
+        ts = f'{str(self.parsed_data.time)} {today}'
+        return datetime.strptime(ts, '%H:%M:%S %y-%m-%d')
+
     def make_gnss(self, parsed_data, dt) -> json:
+        """
+        Creates a GNSS object.
+
+        Args:
+            parsed_data: The parsed GPS data.
+            dt: The datetime object representing the timestamp of the data.
+
+        Returns:
+            dict: A dictionary containing the GNSS data.
+
+        This method calculates the average latitude and longitude, calculates the distance traveled, and creates
+        a GNSS object with relevant information.
+        """
         old_lat, old_lon, _ = average_last_n(self.coordinates)
         self.coordinates.append((parsed_data.lat, parsed_data.lon, dt))
         lat, lon, _ = average_last_n(self.coordinates)
